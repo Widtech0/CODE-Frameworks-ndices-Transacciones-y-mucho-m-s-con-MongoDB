@@ -1,0 +1,259 @@
+db.ventas.insertMany(
+    [
+        {
+            "_id": 1,
+            "producto": "Laptop HP",
+            "cantidad": 10,
+            "precio_unitario": 1200,
+            "fecha_venta": ISODate("2023-01-15T08:00:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 2,
+            "producto": "Dell Laptop",
+            "cantidad": 5,
+            "precio_unitario": 1000,
+            "fecha_venta": ISODate("2023-02-20T12:30:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 3,
+            "producto": "Lenovo Laptop",
+            "cantidad": 8,
+            "precio_unitario": 1100,
+            "fecha_venta": ISODate("2023-03-10T15:45:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 4,
+            "producto": "Smartwatch",
+            "cantidad": 15,
+            "precio_unitario": 300,
+            "fecha_venta": ISODate("2023-04-01T09:30:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 5,
+            "producto": "Camara DSLR",
+            "cantidad": 3,
+            "precio_unitario": 800,
+            "fecha_venta": ISODate("2023-05-12T14:15:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 6,
+            "producto": "Tablet Samsung",
+            "cantidad": 7,
+            "precio_unitario": 500,
+            "fecha_venta": ISODate("2023-06-03T11:45:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 7,
+            "producto": "Libro de Ciencia Ficcion",
+            "cantidad": 20,
+            "precio_unitario": 30,
+            "fecha_venta": ISODate("2023-07-20T16:00:00Z"),
+            "categoria": "Libros"
+        },
+
+        {
+            "_id": 8,
+            "producto": "Refrigeradora LG",
+            "cantidad": 2,
+            "precio_unitario": 1600,
+            "fecha_venta": ISODate("2023-08-05T10:30:00Z"),
+            "categoria": "Electrodomesticos"
+        },
+
+        {
+            "_id": 9,
+            "producto": "Altavoces Bluetooth",
+            "cantidad": 12,
+            "precio_unitario": 100,
+            "fecha_venta": ISODate("2023-09-15T13:20:00Z"),
+            "categoria": "Electrónicos"
+        },
+
+        {
+            "_id": 10,
+            "producto": "Mesa de Centro",
+            "cantidad": 1,
+            "precio_unitario": 200,
+            "fecha_venta": ISODate("2023-10-08T09:00:00Z"),
+            "categoria": "Muebles"
+        }
+    ]
+)
+
+
+db.ventas.aggregate([
+    {
+        $match:{
+            categoria: "Muebles"
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $match:{
+            cantidad: {
+                $gt: 5
+            }
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $match:{
+            fecha_venta: {
+                $gte: ISODate("2023-02-01T00:00:00Z"),
+                $lt: ISODate("2023-04-01T00:00:00Z"),
+            }
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $match:{
+            $and: [
+                { cantidad: {$gte: 5} },
+                { categoria: "Electrónicos" }
+            ]
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $match:{
+            producto: { $regex: /Laptop/i }
+        }
+    }
+]);
+
+/////////
+////////
+///////
+
+db.ventas.aggregate([
+    {
+        $group: {
+            _id: "$categoria",
+            total_vendido: { $sum: "$cantidad" }
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $group: {
+            _id: { $month: "$fecha_venta" },
+            precio_promedio: { $avg: "$precio_unitario" }
+        }
+    }
+]);
+
+
+db.ventas.aggregate([
+    {
+        $group: {
+            _id:{
+                $switch {
+                    branches: [
+                        { case: { $lte: ["$precio_unitario",500] }, then: "Bajo" },
+                        { case: { $lte: ["$precio_unitario",1000] }, then: "Medio" },
+                    ],
+                    default: "Alto"
+                }
+            },
+            cantidad_productos: { $sum: 1 }
+        }
+    }
+]);
+
+/////////
+////////
+///////
+
+db.ventas.aggregate([
+    {
+        $sort: { fecha_venta:1 }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $sort: { precio_unitario: -1 }
+    },
+
+    {
+        $limit:3
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $sort: { precio_unitario: 1 }
+    },
+
+    {
+        $limit:1
+    }
+]);
+
+
+/////////
+////////
+///////
+
+db.ventas.aggregate([
+    {
+        $project: {
+            _id: 1,
+            producto: 1,
+            precio_unitario: 1
+        }
+    }
+]);
+
+db.ventas.aggregate([
+    {
+        $project: {
+            _id: 1,
+            producto: 1,
+            precio_unitario: 1,
+            cantidad: 1,
+            precio_total: { 
+                $multiply:  ["$cantidad","$precio_unitario"]
+            }
+        }
+    }
+]);
+
+
+db.ventas.aggregate([
+    {
+        $project: {
+            _id: 1,
+            producto: 1,
+            cantidad: 1,
+            precio_unitario: 1,
+            fecha_venta_formateada: { 
+                $dateToString:  {
+                    format: "%Y-%m-%d", date: "$fecha_venta"
+                }
+            }
+        }
+    }
+]);
+
