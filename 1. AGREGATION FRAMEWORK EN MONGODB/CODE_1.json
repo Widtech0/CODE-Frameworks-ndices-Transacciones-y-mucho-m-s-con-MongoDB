@@ -1,3 +1,8 @@
+
+//////////////////////////////////////
+    BLOQUE 1. "CONJUNTO DE DATOS"
+//////////////////////////////////////
+
 db.ventas.insertMany(
     [
         {
@@ -92,6 +97,13 @@ db.ventas.insertMany(
     ]
 )
 
+//////////////////////////////////////
+BLOQUE 2. "OPERADOR MATCH"
+//////////////////////////////////////
+
+
+****EJEMPLO 1*****
+//Se muestra del conjunto de datos aquellos elementos pertenecientes a la categoría "Muebles"
 
 db.ventas.aggregate([
     {
@@ -101,6 +113,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 2*****
+//Se muestran aquellos elementos del conjunto que contienen una cantidad de elementos mayores que 5
 db.ventas.aggregate([
     {
         $match:{
@@ -111,6 +125,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 3*****
+//Se muestran aquellos elementos del conjunto que contengan elementos de fecha de venta dados en el rango desde Febrero hasta Abril del 2023
 db.ventas.aggregate([
     {
         $match:{
@@ -122,6 +138,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 4*****
+//Se filtran los elementos del conjunto que contengan una cantidad mayor a 5 y que sean de la categoría de electrónicos
 db.ventas.aggregate([
     {
         $match:{
@@ -133,18 +151,24 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 5*****
+//Se filtra del conjunto de datos aquellos elementos que contengan en su nombre la palabra Laptop, indiferentemente de su escritura 
 db.ventas.aggregate([
     {
         $match:{
-            producto: { $regex: /Laptop/i }
+            producto: { 
+                $regex: /Laptop/i 
+            }
         }
     }
 ]);
 
-/////////
-////////
-///////
+//////////////////////////////////////
+BLOQUE 3. "OPERADOR GROUP"
+//////////////////////////////////////
 
+****EJEMPLO 1*****
+//Se agrupa la sumatoria de las cantidades por categoría
 db.ventas.aggregate([
     {
         $group: {
@@ -154,6 +178,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 2*****
+//Realiza el promedio de los precios unitarios por fecha de venta
 db.ventas.aggregate([
     {
         $group: {
@@ -163,12 +189,15 @@ db.ventas.aggregate([
     }
 ]);
 
-
+****EJEMPLO 3*****
+//Se delimita por medio de un switch dos casos, donde el primero abarca los precios unitarios menores a 500
+//el segundo de los precios unitarios menores a 1000 y el tercero para aquellos que sobrepasen, realizando una 
+//sumatoria de acuerdo al caso
 db.ventas.aggregate([
     {
         $group: {
             _id:{
-                $switch {
+                $switch: {
                     branches: [
                         { case: { $lte: ["$precio_unitario",500] }, then: "Bajo" },
                         { case: { $lte: ["$precio_unitario",1000] }, then: "Medio" },
@@ -181,16 +210,20 @@ db.ventas.aggregate([
     }
 ]);
 
-/////////
-////////
-///////
+//////////////////////////////////////
+BLOQUE 4. "OPERADOR SORT"
+//////////////////////////////////////
 
+****EJEMPLO 1*****
+//Ordena los elementos en forma ascendente
 db.ventas.aggregate([
     {
         $sort: { fecha_venta:1 }
     }
 ]);
 
+****EJEMPLO 2*****
+//Ordena los elementos de forma descendente, delimitando a 3 registros 
 db.ventas.aggregate([
     {
         $sort: { precio_unitario: -1 }
@@ -201,6 +234,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 3*****
+//Ordena los elementos de forma ascendente, delimitando a 1 registros 
 db.ventas.aggregate([
     {
         $sort: { precio_unitario: 1 }
@@ -212,10 +247,12 @@ db.ventas.aggregate([
 ]);
 
 
-/////////
-////////
-///////
+//////////////////////////////////////
+BLOQUE 5. "OPERADOR PROJECT"
+//////////////////////////////////////
 
+****EJEMPLO 1*****
+//Muestra los 3 campos como son id, producto y precio unitario
 db.ventas.aggregate([
     {
         $project: {
@@ -226,6 +263,8 @@ db.ventas.aggregate([
     }
 ]);
 
+****EJEMPLO 2*****
+//Muestra los campos seleccionados y se realiza la multiplicación de los campos cantidad y precio unitario
 db.ventas.aggregate([
     {
         $project: {
@@ -240,7 +279,8 @@ db.ventas.aggregate([
     }
 ]);
 
-
+****EJEMPLO 3*****
+//Transforma la fecha de venta en formato de año, mes y día 
 db.ventas.aggregate([
     {
         $project: {
