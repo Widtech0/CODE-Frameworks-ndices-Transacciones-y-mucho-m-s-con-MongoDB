@@ -297,3 +297,21 @@ db.ventas.aggregate([
     }
 ]);
 
+//////////////////////////////////////
+BLOQUE 6. "facet"
+//////////////////////////////////////
+
+****EJEMPLO 1*****
+db.libros.aggregate([
+    {
+        $facet: {
+            "totalLibros":[
+            {$count: "total"}
+        ],
+        "autoresUnicos": [
+            {$group: {_id: "$autor", libros: {$push: "$titulo"} } },
+            {$projecto: {autor: "$_id", libros: 1. _id: 0} }
+        ]
+    }
+}   
+]);
