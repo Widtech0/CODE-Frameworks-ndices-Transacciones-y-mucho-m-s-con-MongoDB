@@ -493,3 +493,157 @@ db.pedidos.aggregate([
 
 ])
 
+////////////////////////////////////////////////
+//  Inicio de la transaccion
+////////////////////////////////////////////////
+
+session.startTransaction();
+
+try{
+    // paso 1: Actualizar la cantidad  de productos en el inventario
+
+    db.inventario.updateOne({producto;"Laptop X", cantidad: {$gte: 5}},{$inc:{cantidad:-5}});
+
+    // paso 2: Registrar el pedido
+
+    db.pedidos.insertOne({
+        producto:"Lapto x",
+        cantidad: 5, 
+        cliente: "Cliente123",
+        fecha: new Date()
+    });
+
+    //Cofirmar la transaccion
+
+    session.commitTransaction();
+}catch (error){
+    //Revertir la transaccion en caso de error 
+    session.abortTransaction();
+    print("Error en la transaccion: + error");
+}
+
+
+////////////////////////////////////////////////
+// Inicio de la transaccion distribuida
+////////////////////////////////////////////////
+
+session.startTransaction({
+    readConcern: { level: "snapshot"},
+    writeConcern: {w: "majority"}
+});
+
+try{
+    // Paso 1: Actualizar la cantidad de productos en el inventario en centro de datos A
+    db.inventarioCD_A.updateOne({producto: "Laptop X", cantidad: { $gte: 5}},{$inc: {cantidad: -5}});
+
+    //Paso 2: Actualizar la cantidad de productos en el inventario en Centros de Datos B
+    db.inventarioCD_B.updateOne({producto: "Laptop X", cantidad: { $gte: 5}},{$inc: {cantidad: -5}});
+
+    // Confirmar la transaccion distribuida
+    session.commitTransaction();
+
+}catch (error){
+    //Revertir la transaccion en caso de error 
+    session.abortTransaction();
+    print("Error en la transaccion: + error");
+}
+
+
+////////////////////////////////////////////////
+//Uso de transacciones en operaciones complejas.
+////////////////////////////////////////////////
+session.startTransaction();
+try{
+    const asientosDisponibles = db.eventos.findOne({ _id: eventoId}). asientosDisponibles;
+    if(asientosDisponibles >= cantidadAsientos){
+        db.usuarios.updateOne({ _id: userId},{$push: {reservas: {eventoId, cantidadAsientos}}});
+        db.eventos.updateOne({_id: eventoId, asientosDisponibles: { $gte: cantidadAsientos}},
+            {$inc: {asientosDisponibles: -cantidadAsientos}});
+session.commitTransaction();
+    }else{
+        print("No hay suficientes asientos disponibles")
+    }
+}catch (error){
+    //Revertir la transaccion en caso de error 
+    session.abortTransaction();
+    print("Error en la transaccion: + error");
+}
+
+////////////////////////////////////////////////
+ //Estrategias para el modelado de datos en MongoDB
+////////////////////////////////////////////////
+ {
+    _id: ObjectId("..."),
+    titulo: "Titulo del Articulo",
+    contenido : "Contenido del articulo....",
+    autor{
+        nombre: "Nombre del Autor",
+        bio: : " Biografia del autor"
+    },
+    comentario :[
+        {usuario: "Usuario1", texto: "Comentario 1"},
+        {usuario: "Usuario2", texto: "Comentario 2"}
+
+    ]
+ }
+
+////////////////////////////////////////////////
+ //Modelado de relaciones entre documentos.
+////////////////////////////////////////////////
+
+ //Docuemnto del producto
+ {
+    _id: ObjectId("...")
+    nombre: "Nombre del Proucto",
+    descripcion: "Descripcion del Producto",
+    precio: 29.99,
+    categoria: [ObjectId("cat1"), ObjectId(cat2)]
+ }
+
+ // Docuemnto de categoria
+ {
+    _id:ObjectId("cat1"),
+    nombre: "Electronicos",
+    descripcion: "Producto electronico"
+ }
+
+ //documento de categoria
+ {
+    _id: ObjectId("cat2"),
+    nombre: "Ropa",
+    descripcion: "Ropa de moda"
+ }
+ 
+////////////////////////////////////////////////
+// PARTE 2 
+{
+    _id: ObjectId("..."),
+    titulo: "Titulo del Articulo",
+    contenido : "Contenido del articulo....",
+    autor{
+        nombre: "Nombre del Autor",
+        bio: : " Biografia del autor"
+    }
+ }
+
+////////////////////////////////////////////////
+ // Modelado para optimizar consultas y agregaciones
+////////////////////////////////////////////////
+ // Documento e pedido
+
+ {
+    _id: ObjectId("..."),
+    mumero: "123456",
+    fecha: ISODate("2023-01-01"),
+    cliente: {
+        nombre: "Nombre del Cliente",
+        direccion: : " direccion del cliente"
+    },
+    comentario :[
+        {nombre: "Producto1", cantidad: 2, precio: 19.99},
+        {nombre: "Producto2", cantidad: 1, precio: 39.99},
+    ]
+ }
+////////////////////////////////////////////////
+ // parte 2
+db.pedidos.createIndex({fecha:1});
