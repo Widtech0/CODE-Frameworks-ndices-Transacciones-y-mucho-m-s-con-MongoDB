@@ -315,3 +315,181 @@ db.libros.aggregate([
     }
 }   
 ]);
+
+//////////////////////////////////////
+BLOQUE 7. "lookup"
+//////////////////////////////////////
+****EJEMPLO 1*****
+db.pedidos.aggregate([
+    {
+        $lookup: {
+            from: "clientes",
+            localField: "clienteId",
+            foreignField: "_id",
+            as: "infoCliente"
+        }
+    }
+])
+
+//////////////////////////////////////
+BLOQUE 8. "graphLookup"
+//////////////////////////////////////
+****EJEMPLO 1*****
+db.empleados.aggregate([
+    {
+        $graphLookup: {
+            from: "empleados",
+            strartwith: "$_id",
+            connectFromField: "$_id",
+            connectToField: "jefeId",
+            as: "subordinados"
+        }
+    }   
+])
+
+//////////////////////////////////////
+BLOQUE 9. "multiples colecciones"
+//////////////////////////////////////
+****EJEMPLO 1*****
+db.empleados.aggregate([
+    {
+        $graphLookup: {
+            from: "departamentos",
+            localField: "departamentosId",
+            foreignField: "_id",
+            as: "infoDepartamento"
+        }
+    },
+    {
+        $unwind: "$infoDepartamento"
+    }
+])
+
+****EJEMPLO 2*****
+db.pedidos.aggregate([
+    {
+        $lookup: {
+            from: "clientes",
+            localField: "clienteId",
+            foreignField: "_id",
+            as: "infoCliente"
+        }
+    },
+    {
+        $lookup: {
+            from: "productos",
+            localField: "productoId",
+            foreignField: "_id",
+            as: "infoProducto"
+        }
+    },
+    {
+        $unwind: "$infoCliente"
+    },
+    {
+        $unwind: "$infoProducto"
+    }
+])
+
+//////////////////////////////////////
+BLOQUE 10. "Suma y promedio"
+//////////////////////////////////////
+****EJEMPLO 1*****
+db.pedidos.aggregate([
+    //Paso 1 Agrupar por clienteId y calcular el total y el promedio de
+    //productos por cliente
+    {
+    $group:{
+        _id: "$clienteId",
+        totalProductos: {$sum: "$cantidad"}, //total de productos por cliente
+        promedioProductos:{$avg: "$cantidad"} //promedio de productos por cliente
+    }
+    },
+    //Paso 2: unir con la coleccion de clientes para obtener informacion adicional
+     {
+        $lookup: {
+            from: "clientes",
+            localField: "clienteId",
+            foreignField: "_id",
+            as: "infoCliente"
+        }
+    },
+    //Paso 3: Deshacer el array resultante despues de la union
+    {
+        $unwind: "$infoCliente"
+    },
+    //Paso 4: proyectar los campos deseados y renombrar para mayor claridad
+    {
+    $project:{
+    cliente: "$infoCliente.nombre",
+    totalProductos: 1,
+    promedioProductos:1
+    }
+    }
+])
+
+//////////////////////////////////////
+BLOQUE 11. "Maximo y minimo"
+//////////////////////////////////////
+****EJEMPLO 1*****
+db.pedidos.aggregate([
+    //Paso 1 Agrupar por pedidoId y calcular la cantidad maxima y minima de
+    //productos por pedido
+    {
+    $group:{
+        _id: "$pedidoId",
+        maxCantidad: {$max: "$cantidad"}, //cantidad maxima de productos por pedido
+        minCantidad:{$min: "$cantidad"} //cantidad minima de productos por pedido
+    }
+    },
+    //Paso 2: unir con la coleccion de clientes para obtener informacion adicional
+     {
+        $lookup: {
+            from: "productos",
+            localField: "productoId",
+            foreignField: "_id",
+            as: "infoProducto"
+        }
+    },
+    //Paso 3: Deshacer el array resultante despues de la union
+    {
+        $unwind: "$infoProducto"
+    },
+    //Paso 4: proyectar los campos deseados y renombrar para mayor claridad
+    {
+    $project:{
+    pedidoId: "$infoProducto.nombre",
+    maxCantidad: 1,
+    minCantidad:1
+    }
+    }
+])
+
+**** CORRECCION *****
+db.pedidos.aggregate([
+    //Paso 1 Agrupar por pedidoId y obtener la cantidad de productos en cada pedido
+    
+    {
+    $group:{
+        _id: "$pedidoId",
+        cantiProductos: {$sum: "$cantidad"}
+    }
+    },
+    //Paso 2: encontrar la cantidad maximo y minimo de productos
+    {
+     $group:{
+        _id: null,
+        maxCantidad: {$max: "$cantidadProductos"}, 
+        minCantidad:{$min: "$cantidadProductos"}
+    }
+    },
+    //Paso 3: proyectar los resultados finales
+    {
+    $project:{
+    maxCantidad: 1,
+    minCantidad:1
+    }
+    }
+
+])
+
