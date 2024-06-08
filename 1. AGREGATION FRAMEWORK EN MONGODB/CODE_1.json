@@ -644,6 +644,41 @@ session.commitTransaction();
         {nombre: "Producto2", cantidad: 1, precio: 39.99},
     ]
  }
+
 ////////////////////////////////////////////////
+
+db.lugares.createIndex({ ubicacion: "2dsphere":});
+db.lugaes.insertOne( {
+    nombre:"Museo de arte moderno",
+    ubicacion:m {type: "Point", coordinates: [-99.1712, 19.4195] }
+});
+db.lugares.insertOne({
+    nombre:" Parque Chapultepec",
+    ubicacion:{ type: "Point", coordinates: [-99.1817, 19.4142]}
+});
+////////////////////////////////////////////////
+db.lugares.find:({
+    ubicacion: {
+        $near: (
+           $geometry: {type: "Point", coordinates: [-99.1665, 19.4230]}
+            $maxDistance:500 // en metros
+
+}
+}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  // parte 2
 db.pedidos.createIndex({fecha:1});
