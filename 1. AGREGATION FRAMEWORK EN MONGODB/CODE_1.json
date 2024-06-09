@@ -710,6 +710,14 @@ net:
     mode: requireSSL
     PEMKeyFile: /etc/ssl/mongodb.pem
     CAFile: /etc/ssl/ca.pem
+///////Ejemplo de Rol Persoanlizado ////////   
+db.createRole({
+  role: "myCustomRole",
+  privileges: [
+    { resource: { db: "testdb", collection: "" }, actions: [ "find", "update" ] }
+  ],
+  roles: []
+});
 
 
 
