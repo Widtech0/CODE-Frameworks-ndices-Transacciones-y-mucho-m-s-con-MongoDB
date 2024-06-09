@@ -672,5 +672,24 @@ geoespacial> {type: "LineString", coordinates: [longitud,Longitud1], [latitud,la
 geoespacial> {type: "Polygon", coordinates: [longitud,Longitud1], [latitud,latitud1].................}
 geoespacial> {type: "Multipoint", coordinates: [longitud,Longitud1], [latitud,latitud1].................}
 geoespacial> {type: "MultiString", coordinates: [[longitud,Longitud1], [latitud,latitud1].............].....}
+///////////////EJEMPLO DE CONSULTAS GEOESPACIALES/////////////////////////////////
+db.lugares.find ({
+    ubicacion: {
+    $geoWthin:{
+    type: "Polygon",
+    coordinates: []
+        [[[longitud,Longitud1],[[longitud,Longitud2],[[longitud,Longitud3],[[longitud,Longitud4]]
+    ]
+}
+}
+}
+}
+}),
+
+    
 
 
+
+
+
+    
