@@ -685,8 +685,32 @@ db.lugares.find ({
 }
 }
 }),
+///////////////EJEMPLO de CONFIGURACIÒN DE AUTENTIFICACION AVANZADA///////////////
+///////SCRAM////////
+use admin
+db.createUser(
+  {
+    user: "user1",
+    pwd: "password",
+    roles: [ { role: "readWrite", db: "testdb" } ],
+    mechanisms: ["SCRAM-SHA-256"]
+  }
+)
+///////LDAP////////   
+security:
+  ldap:
+    servers: "ldap.example.com"
+    bind:
+      method: "simple"
+      queryUser: "cn=admin,dc=example,dc=com"
+      queryPassword: "password"
+///////x.509//////// 
+net:
+  ssl:
+    mode: requireSSL
+    PEMKeyFile: /etc/ssl/mongodb.pem
+    CAFile: /etc/ssl/ca.pem
 
-    
 
 
 
