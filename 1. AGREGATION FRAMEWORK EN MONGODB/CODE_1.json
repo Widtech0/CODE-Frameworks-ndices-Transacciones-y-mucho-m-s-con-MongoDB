@@ -666,19 +666,11 @@ db.lugares.find:({
 }
 }
 });
+///////////////CONSULTAS GEOESPACIALES/////////////////////////////////
+geoespacial> {type: "Point", coordinates: longitud, latitud}
+geoespacial> {type: "LineString", coordinates: [longitud,Longitud1], [latitud,latitud1]}
+geoespacial> {type: "Polygon", coordinates: [longitud,Longitud1], [latitud,latitud1].................}
+geoespacial> {type: "Multipoint", coordinates: [longitud,Longitud1], [latitud,latitud1].................}
+geoespacial> {type: "MultiString", coordinates: [[longitud,Longitud1], [latitud,latitud1].............].....}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
- // parte 2
-db.pedidos.createIndex({fecha:1});
