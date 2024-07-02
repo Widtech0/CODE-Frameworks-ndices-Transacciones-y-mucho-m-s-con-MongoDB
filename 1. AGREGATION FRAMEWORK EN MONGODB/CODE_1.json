@@ -733,10 +733,34 @@ db.setProfilingLevel(2, { slowms: 100 });
 db.system.profile.find({}).pretty();
 //Para desactivar consulta
 db.setProfilingLevel(0);
-
+//Crear índice
+db.collection.createIndex({ campo:1 });
+//Para obtener índices
+db.libros.getIndexes();
+//Índice compuesto
+db.collection.createIndex({ campo1: 1, campo2: -1});
+//Usar índice en una columna
+db.collection.find({ campo: "valor" }).hint({ campo: 1});
+//
+db.collection.aggregate([
+    { $match: { campo: "valor" } },
+    { $group: { _id: "$campo", count: { $sum: 1 } } }
+]);
 
 
 
 
 
     
+
+
+
+
+
+
+
+
+
+
+
+
