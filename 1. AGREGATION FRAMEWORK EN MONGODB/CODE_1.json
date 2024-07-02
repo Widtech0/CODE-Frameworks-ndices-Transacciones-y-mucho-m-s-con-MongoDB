@@ -718,6 +718,13 @@ db.createRole({
   ],
   roles: []
 });
+////////////////
+///////////////////Comando Explain///////
+//////////
+//La consulta todos aquellos elementos que tienen un autor  llamado “Autor A”
+db.libros,find({autor: Autor "A"});
+
+
 
 
 
