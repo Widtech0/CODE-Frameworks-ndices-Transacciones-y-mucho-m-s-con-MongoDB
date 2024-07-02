@@ -718,13 +718,21 @@ db.createRole({
   ],
   roles: []
 });
-////////////////
-///////////////////Comando Explain///////
-//////////
+////////////////////////////////////////////////
+//////////////Comando Explain///////
+////////////////////////////////////////////////
 //La consulta todos aquellos elementos que tienen un autor  llamado “Autor A”
-db.libros,find({autor: Autor "A"});
-
-
+db.libros,find({ autor: Autor "A" });
+//Mostrar en formato estructurado
+db.libros,find({ autor: Autor "A" }).explain("executionStats");
+//uso de indices
+db.libros,find({ autor: Autor "A" }).explain("executionStats"),indexBounds;
+//Activar perfil de consultas
+db.setProfilingLevel(2, { slowms: 100 });
+//Para ver resultados de coonsulta
+db.system.profile.find({}).pretty();
+//Para desactivar consulta
+db.setProfilingLevel(0);
 
 
 
