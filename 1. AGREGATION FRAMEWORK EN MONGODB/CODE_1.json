@@ -746,7 +746,10 @@ db.collection.aggregate([
     { $match: { campo: "valor" } },
     { $group: { _id: "$campo", count: { $sum: 1 } } }
 ]);
-
+//Estrategias de Backup
+mongodump --db geoespacial --out .
+///Realización de Backups y restauración
+mongorestore --db geoespacial2 geoespacial
 
 
 
