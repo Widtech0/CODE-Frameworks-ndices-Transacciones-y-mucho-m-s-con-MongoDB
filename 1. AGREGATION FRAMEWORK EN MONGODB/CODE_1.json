@@ -750,9 +750,29 @@ db.collection.aggregate([
 mongodump --db geoespacial --out .
 ///Realización de Backups y restauración
 mongorestore --db geoespacial2 geoespacial
-
-
-
+///////////////////////////////
+////Casos de uso y aplicaciones prácticas
+//////////////////////////////
+//Crear bd
+use task_management;
+//crear tarea
+management > db.task.insertOne({
+    title: "Nueva tarea",
+    description: "Descripción de la nueva tarea",
+    due_date: ISODate("2024-03-15"),
+    status: "pendiente"
+});
+// Actualizar tarea
+management > db.task.updateOne(
+    {title: "Revisar informe"},
+    { $set: {
+        description: "Revisar y corregir el informe mensual",
+        due_date: ISODate("2024-02-01"),
+        status: "pendiente",
+        user "Daniel Gomez"
+    }
+    }
+);
 
     
 
