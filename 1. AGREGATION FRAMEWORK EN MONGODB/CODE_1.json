@@ -821,19 +821,53 @@ geospatial_app > db.stores.find({
                      }
                  })
 //--------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Crear base de datos para red social
+user social_app
+// Crear coleccion para usuarios
+social_app > db.createCollection ('users');
+// Crear usuarios
+social_app > const userData = [
+                { username: 'usuario1', name: 'Nombre Usuario 1', email: 'usuario1@example.com'},
+                { username: 'usuario2', name: 'Nombre Usuario 2', email: 'usuario2@example.com'},
+                { username: 'usuario3', name: 'Nombre Usuario 3', email: 'usuario3@example.com'}
+            ];
+// Colocar usuarios en la coleccion de usuarios
+social_app > db.users.insertMany(userData);
+// Crear relaciones entre usuarios
+const relationshipsData = [
+    { user_id: db.users.findOne({ username: 'usuario1' })._id, friend_id: db.users.findOne({ username: 'usuario2'})._id, status: 'amigo' },
+    { user_id: db.users.findOne({ username: 'usuario1' })._id, friend_id: db.users.findOne({ username: 'usuario3'})._id, status: 'pendiente' },
+    { user_id: db.users.findOne({ username: 'usuario2' })._id, friend_id: db.users.findOne({ username: 'usuario3'})._id, status: 'amigo' },
+];
+// Cargar lista de relaciones
+db.relationships.insertMany(relationshipsData);
+// Buscar amigos de usuario1
+const userId = db.users.findOne({ username: 'usuario1' }).id;
+// Funcion para obtner la lista de amigos
+const friendsList = db.relationships.find(
+    { user_id: userId, status: 'amigo' },
+    { friend_id: 1, _id: 0 }
+).toArray();
+///
+// Lista de amigos
+friendsList;
+// Funcion para detalles de lista de amigos
+const friendsDetails = db.users.find(
+    {_id: { $in: frinedsList.map(doc => doc.friend_id) } },
+    { _id: 0, username: 1, name: 1, email: 1 }
+)toArray();
+// Imprimir detalles de amigos
+printjson(friendsDetails);
+/////--------------------
+//obtener user id de usuarios que querramos actualizar la realtionship
+const userId = db.users.findOne({ username: 'usuario1'})._id
+const userId = db.users.findOne({ username: 'usuario3'})._id
+// Funcion Update
+db.relationships.updateOne(
+    { user_id: user1Id, friend_id: user3Id },
+    { $set: { status: 'amigo' }}
+);
+///---------------------
 
 
 
