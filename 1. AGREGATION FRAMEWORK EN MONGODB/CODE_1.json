@@ -773,8 +773,14 @@ management > db.task.updateOne(
     }
     }
 );
+// Encontrar todas las tareas
+management > db.task.find();
+//Encontrar tarea en específico
+management > db.task.find({status: "completado"});
+// Eliminar una tarea
+management > db.task.delete({title: "Nueva tarea"});
+//Desarrollo de una aplicación Geoespacial//
 
-    
 
 
 
