@@ -807,8 +807,20 @@ geospatial_app > for ( let i = 1; i <= 10; i++){
 geospatial_app > db.stores.find({type: "Juguetes"});
 // Crear índice a la localización con geometría esférica 
 geospatial_app > db.stores.createIndex({ location: '2dsphere'});
-
-
+//---------------- Funcion para encontrar un tipo de tienda dentro de ciertas coordenadas y distancia
+geospatial_app > db.stores.find({
+                     type: 'Juguete';
+                     location: {
+                         $near: {
+                             $geometry: {
+                                 type: 'Point',
+                                 coordinates: [0.023887102308092073, 0.08747713184209324] //Ingresa las coordenadas de tu ubicación
+                             },
+                             $maxDistance: 6000 //Distancia en metros (6 kilómetros en este ejemplo)
+                         }
+                     }
+                 })
+//--------------------------------//
 
 
 
