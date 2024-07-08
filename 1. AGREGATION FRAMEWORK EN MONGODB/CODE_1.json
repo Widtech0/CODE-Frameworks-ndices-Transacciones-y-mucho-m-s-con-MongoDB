@@ -780,6 +780,54 @@ management > db.task.find({status: "completado"});
 // Eliminar una tarea
 management > db.task.delete({title: "Nueva tarea"});
 //Desarrollo de una aplicación Geoespacial//
+// Crear base de datos
+use geospatial_app;
+// Crear colección
+geospatial_app > db.createCollection('stores');
+//----ciclo for para creación de "tiendas" aleatorias------//
+geospatial_app > for ( let i = 1; i <= 10; i++){
+                        db.stores.insertOne({
+                            name: ´Tienda ${i}´,
+                            type: i % 3 === 0 ? 'Verduras' : (i % 3=== 1 ? 'Carnes') : ('Juguetes'),
+                            location: {
+                                type: 'Point',
+                                coordinates: [
+                                    getRandomCoordinate(-0.1, 0.1), //latitud entre -0.1 y 0.1 grados
+                                    getRandomCoordinate(-0.1, 0.1), //longitud entre -0.1 y 0.1 grados
+                                ]
+                            }
+                        })
+                    }
+                    //Función auxiliar para generar coordenadas aleatorias en un rango específico
+                    function getRandomCoordinate(min, max){
+                        return Math.random() * (max - min) + min;
+                    }
+//--------------------------------------//
+// Buscar tienda por tipo
+geospatial_app > db.stores.find({type: "Juguetes"});
+// Crear índice a la localización con geometría esférica 
+geospatial_app > db.stores.createIndex({ location: '2dsphere'});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
